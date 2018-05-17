@@ -1,0 +1,7 @@
+[package]
+name = "exchange-rs"
+version = "0.1.0"
+authors = ["carl"]
+
+[dependencies]
+uuid = "0.6"
