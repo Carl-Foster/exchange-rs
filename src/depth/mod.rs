@@ -1,35 +1,43 @@
-mod orders;
+use orders::{Direction, Order};
 
-use self::orders::{Direction, Order};
-
-#[derive(Clone, Debug)]
-struct Depth {
+#[derive(Debug)]
+pub struct Depth {
     direction: Direction,
     orders: Vec<Order>,
-    contract_id: String,
 }
 
 impl Depth {
-    pub fn hydrate(orders: &mut Vec<Order>, contract_id: &str, direction: Direction) -> Depth {
+    pub fn hydrate(orders: &mut Vec<Order>, direction: Direction) -> Depth {
         orders.sort_by_key(|o| o.price);
         Depth {
             direction,
             orders: orders.to_vec(),
-            contract_id: contract_id.to_owned(),
         }
     }
 
-    fn get_top_order(&self, caller_account: String) -> Option<&Order> {
-        match self.orders
-            .binary_search_by(|probe| probe.account_id.cmp(&caller_account))
-        {
-            Ok(index) => self.orders.get(index),
-            Err(_) => None,
+    pub fn match_order(&mut self, new_order: &mut Order) -> Option<Order> {
+        while let Some(top_order) = self.get_top_order(new_order.account_id.clone()).next() {
+            new_order.match_order(top_order);
+        }
+        if new_order.quantity > 0 {
+            Some(new_order.clone())
+        } else {
+            None
         }
     }
 
-    fn add_order(&mut self, order: Order) {
+    pub fn add_order(&mut self, order: Order) {
         self.orders.push(order);
         self.orders.sort_by_key(|o| o.price);
+    }
+
+    fn get_top_order(&mut self, caller_account: String) -> impl Iterator<Item = &mut Order> {
+        self.orders
+            .iter_mut()
+            .filter(move |order| order.account_id == *caller_account)
+    }
+
+    fn remove_order(&mut self, order: &Order) {
+        self.orders.retain(|o| o.id != order.id)
     }
 }

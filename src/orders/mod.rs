@@ -1,6 +1,6 @@
 use std::cmp;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Direction {
     Buy,
     Sell,
@@ -16,6 +16,13 @@ pub struct Order {
 }
 
 impl Order {
+    pub fn match_order(&mut self, other: &mut Order) {
+        if let Some(quantity_matched) = self.get_quantity_matched(other) {
+            self.update_remaining(quantity_matched);
+            other.update_remaining(quantity_matched);
+        }
+    }
+
     fn get_quantity_matched(&self, top_order: &Order) -> Option<u32> {
         let did_match = {
             match self.direction {
@@ -30,7 +37,7 @@ impl Order {
         }
     }
 
-    fn update_remaining(&mut self, matched_quantity: u32) {
+    pub fn update_remaining(&mut self, matched_quantity: u32) {
         self.quantity = self.quantity - matched_quantity;
     }
 }
