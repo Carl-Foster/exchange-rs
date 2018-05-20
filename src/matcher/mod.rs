@@ -1,4 +1,5 @@
 use depth::Depth;
+use order_match::OrderMatch;
 use orders::{Direction, Order};
 
 #[derive(Debug)]
@@ -9,8 +10,8 @@ struct Matcher {
 }
 
 impl Matcher {
-  fn new(orders: &mut Vec<Order>, contract_id: &str) -> Matcher {
-    let (mut buy_orders, mut sell_orders) = {
+  fn new(mut orders: Vec<Order>, contract_id: &str) -> Matcher {
+    let (buy_orders, sell_orders) = {
       let buy_orders = orders
         .drain_filter(|order| order.direction == Direction::Buy)
         .collect::<Vec<Order>>();
@@ -18,13 +19,13 @@ impl Matcher {
       (buy_orders, sell_orders)
     };
     Matcher {
-      buy: Depth::hydrate(&mut buy_orders, Direction::Buy),
-      sell: Depth::hydrate(&mut sell_orders, Direction::Sell),
+      buy: Depth::hydrate(buy_orders, Direction::Buy),
+      sell: Depth::hydrate(sell_orders, Direction::Sell),
       contract_id: contract_id.to_string(),
     }
   }
 
-  fn place_order(&mut self, new_order: &mut Order) {
+  fn place_order(&mut self, mut new_order: Order) -> Vec<OrderMatch> {
     let (depth_to_match, depth_to_add) = {
       if let Direction::Buy = new_order.direction {
         (&mut self.sell, &mut self.buy)
@@ -33,8 +34,11 @@ impl Matcher {
       }
     };
 
-    if let Some(unmatched_order) = depth_to_match.match_order(new_order) {
-      depth_to_add.add_order(unmatched_order);
+    let order_matches = depth_to_match.match_order(&mut new_order);
+    depth_to_match.flush_filled_orders();
+    if new_order.quantity > 0 {
+      depth_to_add.add_order(new_order);
     }
+    order_matches
   }
 }
