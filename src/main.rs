@@ -19,21 +19,26 @@ mod order_match;
 mod orders;
 
 use exchange::Exchange;
+use order_match::OrderMatch;
 use orders::Order;
 use rocket::State;
 use rocket_contrib::Json;
 use std::sync::Mutex;
 
-#[post("/contract/<id>/order", format = "application/json", data = "<order>")]
-fn new_order(id: u32, order: Json<Order>, exchange: State<Mutex<Exchange>>) -> String {
-    let mut manager = exchange.lock().expect("exchange lock.");
+#[post("/contracts/<id>/orders", data = "<order>")]
+fn new_order(
+    id: u32,
+    order: Json<Order>,
+    exchange: State<Mutex<Exchange>>,
+) -> Result<Json<Vec<OrderMatch>>, String> {
+    let manager = exchange.lock().expect("exchange lock.");
     match manager.place_order(order.into_inner(), id) {
-        Ok(matches) => serde_json::to_string(&matches).unwrap(),
-        Err(error) => error,
+        Ok(matches) => Ok(Json(matches)),
+        Err(error) => Err(error),
     }
 }
 
-#[get("/contract/<id>/orders")]
+#[get("/contracts/<id>/orders")]
 fn orders(id: u32, exchange: State<Mutex<Exchange>>) -> Result<Json<Vec<Order>>, String> {
     let manager = exchange.lock().expect("exchange lock");
     match manager.get_orders(id) {

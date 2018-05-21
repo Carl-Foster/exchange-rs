@@ -1,11 +1,12 @@
 use std::collections::HashMap;
+use std::sync::Mutex;
 
 use matcher::Matcher;
 use order_match::OrderMatch;
 use orders::Order;
 
 pub struct Exchange {
-    matchers: HashMap<u32, Matcher>,
+    matchers: HashMap<u32, Mutex<Matcher>>,
 }
 
 impl Exchange {
@@ -13,18 +14,18 @@ impl Exchange {
         let mut matchers = HashMap::new();
         // TODO: Pass in via config
         for i in 1..5 {
-            matchers.insert(i, Matcher::new(Vec::new(), i));
+            matchers.insert(i, Mutex::new(Matcher::new(Vec::new(), i)));
         }
         Exchange { matchers }
     }
 
     pub fn place_order(
-        &mut self,
+        &self,
         new_order: Order,
         contract_id: u32,
     ) -> Result<Vec<OrderMatch>, String> {
-        if let Some(matcher) = self.matchers.get_mut(&contract_id) {
-            let matches = matcher.place_order(new_order);
+        if let Some(matcher) = self.matchers.get(&contract_id) {
+            let matches = matcher.lock().unwrap().place_order(new_order);
             // TODO: save all state (order, depth, ordermatches)
             Ok(matches)
         } else {
@@ -34,7 +35,7 @@ impl Exchange {
 
     pub fn get_orders(&self, contract_id: u32) -> Result<Vec<Order>, String> {
         if let Some(matcher) = self.matchers.get(&contract_id) {
-            Ok(matcher.get_orders())
+            Ok(matcher.lock().unwrap().get_orders())
         } else {
             Err(format!("Invalid contract_id {}", contract_id))
         }
