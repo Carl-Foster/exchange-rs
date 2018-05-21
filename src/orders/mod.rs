@@ -43,7 +43,7 @@ impl Order {
             self.quantity >= matched_quantity,
             "Quantity to remove is greater than order's current quantity"
         );
-        self.quantity = self.quantity - matched_quantity;
+        self.quantity -= matched_quantity;
     }
 }
 
