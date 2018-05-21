@@ -23,7 +23,7 @@ impl Depth {
     pub fn match_order(&mut self, new_order: &mut Order) -> Vec<OrderMatch> {
         let mut order_matches: Vec<OrderMatch> = Vec::new();
         while let Some(top_order) = self.get_valid_orders(new_order.account_id.clone()).next() {
-            if let Some(order_match) = new_order.match_with(top_order) {
+            if let Some(order_match) = OrderMatch::match_orders(new_order, top_order) {
                 new_order.update_remaining(order_match.quantity_matched);
                 top_order.update_remaining(order_match.quantity_matched);
                 order_matches.push(order_match);
@@ -71,7 +71,7 @@ mod test {
 
     #[test]
     fn hydrate_with_no_orders_is_fine() {
-        let mut empty_orders: Vec<Order> = Vec::new();
+        let empty_orders: Vec<Order> = Vec::new();
         let depth = Depth::hydrate(empty_orders, Direction::Buy);
         assert!(depth.orders.is_empty());
     }

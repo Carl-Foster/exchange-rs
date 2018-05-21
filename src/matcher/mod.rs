@@ -3,14 +3,14 @@ use order_match::OrderMatch;
 use orders::{Direction, Order};
 
 #[derive(Debug)]
-struct Matcher {
+pub struct Matcher {
   buy: Depth,
   sell: Depth,
-  contract_id: String,
+  contract_id: u32,
 }
 
 impl Matcher {
-  fn new(mut orders: Vec<Order>, contract_id: &str) -> Matcher {
+  pub fn new(mut orders: Vec<Order>, contract_id: u32) -> Matcher {
     let (buy_orders, sell_orders) = {
       let buy_orders = orders
         .drain_filter(|order| order.direction == Direction::Buy)
@@ -19,13 +19,13 @@ impl Matcher {
       (buy_orders, sell_orders)
     };
     Matcher {
+      contract_id,
       buy: Depth::hydrate(buy_orders, Direction::Buy),
       sell: Depth::hydrate(sell_orders, Direction::Sell),
-      contract_id: contract_id.to_string(),
     }
   }
 
-  fn place_order(&mut self, mut new_order: Order) -> Vec<OrderMatch> {
+  pub fn place_order(&mut self, mut new_order: Order) -> Vec<OrderMatch> {
     let (depth_to_match, depth_to_add) = {
       if let Direction::Buy = new_order.direction {
         (&mut self.sell, &mut self.buy)
