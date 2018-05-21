@@ -25,6 +25,17 @@ impl Matcher {
     }
   }
 
+  pub fn get_orders(&self) -> Vec<Order> {
+    let buy_orders = self.buy.get_orders();
+    let sell_orders = self.sell.get_orders();
+
+    let mut orders: Vec<Order> = Vec::new();
+    orders.append(&mut buy_orders.clone());
+    orders.append(&mut sell_orders.clone());
+
+    orders
+  }
+
   pub fn place_order(&mut self, mut new_order: Order) -> Vec<OrderMatch> {
     let (depth_to_match, depth_to_add) = {
       if let Direction::Buy = new_order.direction {

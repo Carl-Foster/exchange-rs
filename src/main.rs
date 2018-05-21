@@ -33,10 +33,19 @@ fn new_order(id: u32, order: Json<Order>, exchange: State<Mutex<Exchange>>) -> S
     }
 }
 
+#[get("/contract/<id>/orders")]
+fn orders(id: u32, exchange: State<Mutex<Exchange>>) -> Result<Json<Vec<Order>>, String> {
+    let manager = exchange.lock().expect("exchange lock");
+    match manager.get_orders(id) {
+        Ok(orders) => Ok(Json(orders)),
+        Err(error) => Err(error),
+    }
+}
+
 fn main() {
     let exchange = Exchange::init();
     rocket::ignite()
-        .mount("/", routes![new_order])
+        .mount("/", routes![new_order, orders])
         .manage(Mutex::new(exchange))
         .launch();
 }

@@ -31,4 +31,12 @@ impl Exchange {
             Err(format!("Invalid contract_id {}", contract_id))
         }
     }
+
+    pub fn get_orders(&self, contract_id: u32) -> Result<Vec<Order>, String> {
+        if let Some(matcher) = self.matchers.get(&contract_id) {
+            Ok(matcher.get_orders())
+        } else {
+            Err(format!("Invalid contract_id {}", contract_id))
+        }
+    }
 }

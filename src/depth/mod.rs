@@ -34,6 +34,10 @@ impl Depth {
         order_matches
     }
 
+    pub fn get_orders(&self) -> &Vec<Order> {
+        &self.orders
+    }
+
     pub fn add_order(&mut self, order: Order) {
         assert_eq!(
             self.direction, order.direction,
@@ -51,10 +55,6 @@ impl Depth {
         self.orders
             .iter_mut()
             .filter(move |order| order.account_id != *caller_account)
-    }
-
-    fn remove_order(&mut self, order: &Order) {
-        self.orders.retain(|o| o.id != order.id)
     }
 
     fn sort_orders(&mut self) {

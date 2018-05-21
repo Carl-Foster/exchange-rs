@@ -10,18 +10,19 @@ pub enum Direction {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Order {
     #[serde(default = "Order::new_id")]
-    #[serde(skip)]
+    #[serde(skip_deserializing)]
     pub id: String,
     pub price: u32,
     pub quantity: u32,
     pub account_id: String,
     pub direction: Direction,
     #[serde(default = "Utc::now")]
-    #[serde(skip)]
+    #[serde(skip_deserializing)]
     pub created_at: DateTime<Utc>,
 }
 
 impl Order {
+    #[cfg(test)]
     pub fn new(price: u32, quantity: u32, account_id: &str, direction: Direction) -> Order {
         Order {
             price,
