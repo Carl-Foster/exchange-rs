@@ -33,7 +33,6 @@ impl Exchange {
         }
     }
 
-    // TODO: Get orders from DB to not lock exchange
     pub fn get_orders(&self, contract_id: u32) -> Result<Vec<Order>, String> {
         if let Some(matcher) = self.matchers.get(&contract_id) {
             Ok(matcher.lock().unwrap().get_orders())

@@ -10,18 +10,12 @@ pub struct Matcher {
 }
 
 impl Matcher {
-  pub fn new(orders: Vec<Order>, contract_id: u32) -> Matcher {
+  pub fn new(mut orders: Vec<Order>, contract_id: u32) -> Matcher {
     let (buy_orders, sell_orders) = {
-      let buy_orders: Vec<Order> = orders
-        .iter()
-        .filter(|o| o.direction == Direction::Buy)
-        .cloned()
-        .collect();
-      let sell_orders = orders
-        .iter()
-        .filter(|o| o.direction == Direction::Sell)
-        .cloned()
-        .collect();
+      let buy_orders = orders
+        .drain_filter(|order| order.direction == Direction::Buy)
+        .collect::<Vec<Order>>();
+      let sell_orders = orders;
       (buy_orders, sell_orders)
     };
     Matcher {
