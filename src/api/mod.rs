@@ -1,5 +1,5 @@
 use exchange::Exchange;
-use matcher::*;
+use matcher::{Order, OrderMatch};
 use rocket::State;
 use rocket::{ignite, Rocket};
 use rocket_contrib::Json;
