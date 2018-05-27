@@ -1,17 +1,20 @@
 use chrono::prelude::{DateTime, Utc};
 use uuid::Uuid;
 
+use exchange::schema::orders;
+
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 pub enum Direction {
     Buy,
     Sell,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize, Insertable, Queryable)]
+#[table_name = "orders"]
 pub struct Order {
     #[serde(default = "Order::new_id")]
     #[serde(skip_deserializing)]
-    pub id: String,
+    pub id: Uuid,
     pub price: u32,
     pub quantity: u32,
     pub account_id: String,
@@ -34,8 +37,8 @@ impl Order {
         }
     }
 
-    fn new_id() -> String {
-        Uuid::new_v4().to_string()
+    fn new_id() -> Uuid {
+        Uuid::new_v4()
     }
 
     pub fn update_remaining(&mut self, matched_quantity: u32) {

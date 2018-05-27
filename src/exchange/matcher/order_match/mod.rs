@@ -6,9 +6,11 @@ use uuid::Uuid;
 #[cfg(test)]
 mod tests;
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+use super::super::schema::order_matches;
+#[derive(Debug, Clone, Deserialize, Serialize, Queryable, Insertable)]
+#[table_name = "order_matches"]
 pub struct OrderMatch {
-    id: String,
+    id: Uuid,
     buy_order_id: String,
     sell_order_id: String,
     pub quantity_matched: u32,
@@ -27,7 +29,7 @@ impl OrderMatch {
             }
         };
         OrderMatch {
-            id: Uuid::new_v4().to_string(),
+            id: Uuid::new_v4(),
             created_at: Utc::now(),
             buy_order_id,
             sell_order_id,
