@@ -1,5 +1,5 @@
+use super::orders::{Direction, Order};
 use chrono::prelude::{DateTime, Utc};
-use orders::{Direction, Order};
 use std::cmp;
 use uuid::Uuid;
 

@@ -1,5 +1,5 @@
-use order_match::OrderMatch;
-use orders::{Direction, Order};
+use super::order_match::OrderMatch;
+use super::orders::{Direction, Order};
 
 #[derive(Debug)]
 pub struct Depth {
