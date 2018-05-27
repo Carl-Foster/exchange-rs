@@ -1,0 +1,11 @@
+[package]
+name = "matcher"
+version = "0.1.0"
+authors = ["Carl Foster <carl.john.foster@gmail.com>"]
+
+[dependencies]
+uuid = { version = "0.6", features = ["v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+serde = "1.0"
+serde_derive = "1.0"
+serde_json = "1.0"

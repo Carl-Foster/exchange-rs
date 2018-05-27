@@ -1,9 +1,7 @@
 use std::collections::HashMap;
 use std::sync::Mutex;
 
-use matcher::Matcher;
-use order_match::OrderMatch;
-use orders::Order;
+use matcher::{Matcher, Order, OrderMatch};
 
 pub struct Exchange {
     matchers: HashMap<u32, Mutex<Matcher>>,
