@@ -22,7 +22,7 @@ impl Depth {
 
     pub fn match_order(&mut self, new_order: &mut Order) -> Vec<OrderMatch> {
         let mut order_matches: Vec<OrderMatch> = Vec::new();
-        let mut matchable_orders = self.get_matchable_orders(&new_order.account_id);
+        let mut matchable_orders = self.get_matchable_orders(new_order.account_id.clone());
         while let Some(top_order) = matchable_orders.next() {
             if let Some(order_match) = OrderMatch::match_orders(new_order, top_order) {
                 new_order.update_remaining(order_match.quantity_matched);
@@ -54,7 +54,7 @@ impl Depth {
 
     fn get_matchable_orders<'a>(
         &mut self,
-        caller_account: &'a str,
+        caller_account: String,
     ) -> impl Iterator<Item = &mut Order> {
         self.orders
             .iter_mut()

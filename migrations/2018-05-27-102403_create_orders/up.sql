@@ -5,5 +5,5 @@ CREATE TABLE orders (
     quantity INTEGER NOT NULL CHECK (quantity > 0),
     account_id VARCHAR NOT NULL,
     direction VARCHAR NOT NULL,
-    created_at TIMESTAMP
+    created_at TIMESTAMPTZ NOT NULL
 );

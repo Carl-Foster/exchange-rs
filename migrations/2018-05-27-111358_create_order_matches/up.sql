@@ -5,5 +5,5 @@ CREATE TABLE order_matches (
     sell_order_id UUID NOT NULL REFERENCES orders check (sell_order_id != buy_order_id),
     quantity_matched INTEGER NOT NULL CHECK (quantity_matched > 0),
     price_matched INTEGER NOT NULL CHECK (price_matched > 0),
-    created_at TIMESTAMP NOT NULL
+    created_at TIMESTAMPTZ NOT NULL
 );

@@ -11,10 +11,10 @@ use super::super::schema::order_matches;
 #[table_name = "order_matches"]
 pub struct OrderMatch {
     id: Uuid,
-    buy_order_id: String,
-    sell_order_id: String,
-    pub quantity_matched: u32,
-    price_matched: u32,
+    buy_order_id: Uuid,
+    sell_order_id: Uuid,
+    pub quantity_matched: i32,
+    price_matched: i32,
     created_at: DateTime<Utc>,
 }
 

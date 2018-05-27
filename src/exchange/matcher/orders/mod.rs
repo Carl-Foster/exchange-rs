@@ -3,20 +3,17 @@ use uuid::Uuid;
 
 use exchange::schema::orders;
 
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
-pub enum Direction {
-    Buy,
-    Sell,
-}
+mod direction;
 
-#[derive(Clone, Debug, Deserialize, Serialize, Insertable, Queryable)]
-#[table_name = "orders"]
+pub use self::direction::Direction;
+
+#[derive(Clone, Debug, Deserialize, Serialize, Queryable, Insertable)]
 pub struct Order {
     #[serde(default = "Order::new_id")]
     #[serde(skip_deserializing)]
     pub id: Uuid,
-    pub price: u32,
-    pub quantity: u32,
+    pub price: i32,
+    pub quantity: i32,
     pub account_id: String,
     pub direction: Direction,
     #[serde(default = "Utc::now")]
@@ -26,7 +23,7 @@ pub struct Order {
 
 impl Order {
     #[cfg(test)]
-    pub fn new(price: u32, quantity: u32, account_id: &str, direction: Direction) -> Order {
+    pub fn new(price: i32, quantity: i32, account_id: &str, direction: Direction) -> Order {
         Order {
             price,
             quantity,
@@ -41,7 +38,7 @@ impl Order {
         Uuid::new_v4()
     }
 
-    pub fn update_remaining(&mut self, matched_quantity: u32) {
+    pub fn update_remaining(&mut self, matched_quantity: i32) {
         assert!(
             self.quantity >= matched_quantity,
             "Quantity to remove is greater than order's current quantity"
