@@ -2,7 +2,6 @@ use std::collections::HashMap;
 use std::sync::Mutex;
 
 pub mod matcher;
-pub mod schema;
 mod store;
 
 use self::matcher::{Matcher, Order, OrderMatch};
