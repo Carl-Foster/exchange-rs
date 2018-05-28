@@ -35,9 +35,9 @@ impl Exchange {
         }
     }
 
-    pub fn get_orders(&self, contract_id: u32) -> Result<Vec<Order>, String> {
+    pub fn get_depth(&self, contract_id: u32) -> Result<Vec<Order>, String> {
         if let Some(matcher) = self.matchers.get(&contract_id) {
-            Ok(matcher.lock().unwrap().get_orders())
+            Ok(matcher.lock().unwrap().get_depth())
         } else {
             Err(format!("Invalid contract_id {}", contract_id))
         }

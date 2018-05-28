@@ -25,7 +25,7 @@ impl Matcher {
     }
   }
 
-  pub fn get_orders(&self) -> Vec<Order> {
+  pub fn get_depth(&self) -> Vec<Order> {
     let buy_orders = self.buy.get_orders();
     let sell_orders = self.sell.get_orders();
 

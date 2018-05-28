@@ -16,9 +16,9 @@ fn new_order(
     }
 }
 
-#[get("/contracts/<id>/orders")]
+#[get("/contracts/<id>/depth")]
 fn orders(id: u32, exchange: State<Exchange>) -> Result<Json<Vec<Order>>, String> {
-    match exchange.get_orders(id) {
+    match exchange.get_depth(id) {
         Ok(orders) => Ok(Json(orders)),
         Err(error) => Err(error),
     }
