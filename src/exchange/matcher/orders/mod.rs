@@ -1,7 +1,7 @@
 use chrono::prelude::{DateTime, Utc};
 use uuid::Uuid;
 
-use exchange::schema::orders;
+use exchange::store::schema::orders;
 
 mod direction;
 

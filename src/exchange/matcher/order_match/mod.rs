@@ -6,7 +6,7 @@ use uuid::Uuid;
 #[cfg(test)]
 mod tests;
 
-use super::super::schema::order_matches;
+use exchange::store::schema::order_matches;
 #[derive(Debug, Clone, Deserialize, Serialize, Queryable, Insertable)]
 #[table_name = "order_matches"]
 pub struct OrderMatch {
