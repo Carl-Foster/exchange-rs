@@ -8,6 +8,7 @@ mod direction;
 pub use self::direction::Direction;
 
 #[derive(Clone, Debug, Deserialize, Serialize, Queryable, Insertable)]
+#[table_name = "orders"]
 pub struct Order {
     #[serde(default = "Order::new_id")]
     #[serde(skip_deserializing)]
