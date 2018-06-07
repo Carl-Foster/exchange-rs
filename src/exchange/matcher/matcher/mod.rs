@@ -4,6 +4,8 @@ use super::orders::{Direction, Order};
 
 #[derive(Debug)]
 pub struct Matcher {
+  orders: Vec<Order>,
+  matches: Vec<OrderMatch>,
   buy: Depth,
   sell: Depth,
   contract_id: i32,
@@ -22,6 +24,8 @@ impl Matcher {
       contract_id,
       buy: Depth::hydrate(buy_orders, Direction::Buy),
       sell: Depth::hydrate(sell_orders, Direction::Sell),
+      orders: Vec::new(),
+      matches: Vec::new(),
     }
   }
 
@@ -51,5 +55,13 @@ impl Matcher {
       depth_to_add.add_order(new_order);
     }
     order_matches
+  }
+
+  pub fn get_orders(&self) -> &Vec<Order> {
+    &self.orders
+  }
+
+  pub fn get_matches(&self) -> &Vec<OrderMatch> {
+    &self.matches
   }
 }
