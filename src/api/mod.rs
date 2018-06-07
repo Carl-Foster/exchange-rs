@@ -4,36 +4,42 @@ use rocket::State;
 use rocket::{ignite, Rocket};
 use rocket_contrib::Json;
 
-#[post("/contracts/<id>/orders", data = "<order>")]
+#[post("/orders", data = "<order>")]
 fn place_order(
-    id: u32,
     order: Json<Order>,
     exchange: State<Exchange>,
 ) -> Result<Json<Vec<OrderMatch>>, String> {
-    match exchange.place_order(order.into_inner(), id) {
+    match exchange.place_order(order.into_inner()) {
         Ok(matches) => Ok(Json(matches)),
         Err(error) => Err(error),
     }
 }
 
 #[get("/contracts/<id>/orders")]
-fn get_orders(id: u32, exchange: State<Exchange>) -> Result<Json<Vec<Order>>, String> {
-    match exchange.get_orders(id) {
-        Ok(orders) => Ok(Json(orders)),
-        Err(error) => Err(error),
-    }
+fn get_orders(id: i32, exchange: State<Exchange>) -> Json<Vec<Order>> {
+    let orders = exchange
+        .get_orders()
+        .iter()
+        .filter(|order| order.contract_id == id)
+        .cloned()
+        .collect();
+
+    Json(orders)
 }
 
 #[get("/contracts/<id>/matches")]
-fn get_matches(id: u32, exchange: State<Exchange>) -> Result<Json<Vec<OrderMatch>>, String> {
-    match exchange.get_matches(id) {
-        Ok(matches) => Ok(Json(matches)),
-        Err(error) => Err(error),
-    }
+fn get_matches(id: i32, exchange: State<Exchange>) -> Json<Vec<OrderMatch>> {
+    let matches = exchange
+        .get_matches()
+        .iter()
+        .filter(|order_match| order_match.contract_id == id)
+        .cloned()
+        .collect();
+    Json(matches)
 }
 
 #[get("/contracts/<id>/depth")]
-fn get_depth(id: u32, exchange: State<Exchange>) -> Result<Json<Vec<Order>>, String> {
+fn get_depth(id: i32, exchange: State<Exchange>) -> Result<Json<Vec<Order>>, String> {
     match exchange.get_depth(id) {
         Ok(orders) => Ok(Json(orders)),
         Err(error) => Err(error),

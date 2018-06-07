@@ -1,14 +1,11 @@
 use chrono::prelude::{DateTime, Utc};
 use uuid::Uuid;
 
-use exchange::store::schema::orders;
-
 mod direction;
 
 pub use self::direction::Direction;
 
-#[derive(Clone, Debug, Deserialize, Serialize, Queryable, Insertable)]
-#[table_name = "orders"]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Order {
     #[serde(default = "Order::new_id")]
     #[serde(skip_deserializing)]
@@ -16,6 +13,7 @@ pub struct Order {
     pub price: i32,
     pub quantity: i32,
     pub account_id: String,
+    pub contract_id: i32,
     pub direction: Direction,
     #[serde(default = "Utc::now")]
     #[serde(skip_deserializing)]
@@ -24,11 +22,18 @@ pub struct Order {
 
 impl Order {
     #[cfg(test)]
-    pub fn new(price: i32, quantity: i32, account_id: &str, direction: Direction) -> Order {
+    pub fn new(
+        price: i32,
+        quantity: i32,
+        account_id: &str,
+        direction: Direction,
+        contract_id: i32,
+    ) -> Order {
         Order {
             price,
             quantity,
             direction,
+            contract_id,
             account_id: account_id.to_string(),
             id: Order::new_id(),
             created_at: Utc::now(),

@@ -6,11 +6,11 @@ use super::orders::{Direction, Order};
 pub struct Matcher {
   buy: Depth,
   sell: Depth,
-  contract_id: u32,
+  contract_id: i32,
 }
 
 impl Matcher {
-  pub fn new(mut orders: Vec<Order>, contract_id: u32) -> Matcher {
+  pub fn new(mut orders: Vec<Order>, contract_id: i32) -> Matcher {
     let (buy_orders, sell_orders) = {
       let buy_orders = orders
         .drain_filter(|order| order.direction == Direction::Buy)
