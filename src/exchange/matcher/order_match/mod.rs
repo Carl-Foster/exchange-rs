@@ -11,7 +11,6 @@ pub struct OrderMatch {
     id: Uuid,
     buy_order_id: Uuid,
     sell_order_id: Uuid,
-    pub contract_id: i32,
     pub quantity_matched: i32,
     price_matched: i32,
     created_at: DateTime<Utc>,
@@ -30,7 +29,6 @@ impl OrderMatch {
         OrderMatch {
             id: Uuid::new_v4(),
             created_at: Utc::now(),
-            contract_id: top_order.contract_id,
             buy_order_id,
             sell_order_id,
             quantity_matched,

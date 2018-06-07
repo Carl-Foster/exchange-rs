@@ -13,7 +13,6 @@ pub struct Order {
     pub price: i32,
     pub quantity: i32,
     pub account_id: String,
-    pub contract_id: i32,
     pub direction: Direction,
     #[serde(default = "Utc::now")]
     #[serde(skip_deserializing)]
@@ -22,18 +21,11 @@ pub struct Order {
 
 impl Order {
     #[cfg(test)]
-    pub fn new(
-        price: i32,
-        quantity: i32,
-        account_id: &str,
-        direction: Direction,
-        contract_id: i32,
-    ) -> Order {
+    pub fn new(price: i32, quantity: i32, account_id: &str, direction: Direction) -> Order {
         Order {
             price,
             quantity,
             direction,
-            contract_id,
             account_id: account_id.to_string(),
             id: Order::new_id(),
             created_at: Utc::now(),
