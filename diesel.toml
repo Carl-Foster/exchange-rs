@@ -1,2 +1,0 @@
-[print_schema]
-file = "src/exchange/store/schema.rs"

@@ -1,4 +1,4 @@
-use exchange::matcher::{Order, OrderMatch};
+use exchange::matcher::{DepthOrder, Direction, Order, OrderMatch};
 use exchange::Exchange;
 use rocket::response::status::NotFound;
 use rocket::State;
@@ -39,10 +39,14 @@ fn get_matches(
         .map_err(|e| NotFound(format!("{}", e)))
 }
 
-#[get("/contracts/<id>/depth")]
-fn get_depth(id: i32, exchange: State<Exchange>) -> Result<Json<Vec<Order>>, NotFound<String>> {
+#[get("/contracts/<id>/depth/<direction>")]
+fn get_depth(
+    id: i32,
+    direction: Direction,
+    exchange: State<Exchange>,
+) -> Result<Json<Vec<DepthOrder>>, NotFound<String>> {
     exchange
-        .get_depth(id)
+        .get_depth(id, direction)
         .map(|depth| Json(depth))
         .map_err(|e| NotFound(format!("{}", e)))
 }

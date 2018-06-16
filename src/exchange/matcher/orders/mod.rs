@@ -1,8 +1,10 @@
 use chrono::prelude::{DateTime, Utc};
 use uuid::Uuid;
 
+pub mod depth_order;
 mod direction;
 
+pub use self::depth_order::DepthOrder;
 pub use self::direction::Direction;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]

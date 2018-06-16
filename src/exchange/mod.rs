@@ -5,7 +5,7 @@ mod error;
 pub mod matcher;
 
 use self::error::BadContractError;
-use self::matcher::{Matcher, Order, OrderMatch};
+use self::matcher::{DepthOrder, Direction, Matcher, Order, OrderMatch};
 
 pub type MatcherResult<T> = Result<T, BadContractError>;
 
@@ -17,7 +17,7 @@ impl Exchange {
     pub fn init() -> Exchange {
         let mut matchers = HashMap::new();
         // TODO: Pass in via config
-        for i in 1..5 {
+        for i in 1..2 {
             matchers.insert(i, Mutex::new(Matcher::new(Vec::new(), i)));
         }
         Exchange { matchers }
@@ -42,9 +42,13 @@ impl Exchange {
             .map(|matcher| matcher.get_matches().clone())
     }
 
-    pub fn get_depth(&self, contract_id: i32) -> MatcherResult<Vec<Order>> {
+    pub fn get_depth(
+        &self,
+        contract_id: i32,
+        direction: Direction,
+    ) -> MatcherResult<Vec<DepthOrder>> {
         self.get_matcher(contract_id)
-            .map(|matcher| matcher.get_depth())
+            .map(|matcher| matcher.get_depth(direction))
     }
 
     fn get_matcher(&self, contract_id: i32) -> MatcherResult<MutexGuard<Matcher>> {

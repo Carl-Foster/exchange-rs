@@ -6,4 +6,4 @@ mod orders;
 pub use self::depth::Depth;
 pub use self::matcher::Matcher;
 pub use self::order_match::OrderMatch;
-pub use self::orders::{Direction, Order};
+pub use self::orders::{DepthOrder, Direction, Order};
