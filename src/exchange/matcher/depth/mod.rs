@@ -1,7 +1,7 @@
 use super::order_match::OrderMatch;
 use super::orders::{Direction, Order};
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Depth {
     direction: Direction,
     orders: Vec<Order>,

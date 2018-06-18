@@ -1,8 +1,12 @@
+use serde_json;
+use std::io::Error;
+use std::{fs::File, io};
+
 use super::depth::Depth;
 use super::order_match::OrderMatch;
 use super::orders::{DepthOrder, Direction, Order};
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Matcher {
   orders: Vec<Order>,
   matches: Vec<OrderMatch>,
@@ -12,14 +16,11 @@ pub struct Matcher {
 }
 
 impl Matcher {
-  pub fn new(orders: Vec<Order>, contract_id: i32) -> Matcher {
-    let (buy_orders, sell_orders) = orders
-      .into_iter()
-      .partition(|order| order.direction == Direction::Buy);
+  pub fn new(contract_id: i32) -> Matcher {
     Matcher {
       contract_id,
-      buy: Depth::hydrate(buy_orders, Direction::Buy),
-      sell: Depth::hydrate(sell_orders, Direction::Sell),
+      buy: Depth::hydrate(Vec::new(), Direction::Buy),
+      sell: Depth::hydrate(Vec::new(), Direction::Sell),
       orders: Vec::new(),
       matches: Vec::new(),
     }
@@ -35,12 +36,19 @@ impl Matcher {
     DepthOrder::from_orders(orders)
   }
 
-  pub fn place_order(&mut self, mut new_order: Order) -> Vec<OrderMatch> {
+  pub fn place_order(&mut self, new_order: Order) -> Result<Vec<OrderMatch>, Error> {
+    self.orders.push(new_order.clone());
+    let order_matches = self.match_order(new_order);
+    self.matches.append(&mut order_matches.clone());
+    self.save_state()?;
+    Ok(order_matches)
+  }
+
+  fn match_order(&mut self, mut new_order: Order) -> Vec<OrderMatch> {
     let (depth_to_match, depth_to_add) = {
-      if let Direction::Buy = new_order.direction {
-        (&mut self.sell, &mut self.buy)
-      } else {
-        (&mut self.buy, &mut self.sell)
+      match new_order.direction {
+        Direction::Buy => (&mut self.sell, &mut self.buy),
+        Direction::Sell => (&mut self.buy, &mut self.sell),
       }
     };
 
@@ -58,5 +66,12 @@ impl Matcher {
 
   pub fn get_matches(&self) -> &Vec<OrderMatch> {
     &self.matches
+  }
+
+  pub fn save_state(&self) -> io::Result<()> {
+    let filename = format!("matcher_{}.json", self.contract_id);
+    File::create(&filename)
+      .map(|file| serde_json::to_writer(file, self))
+      .map(|_| ())
   }
 }
