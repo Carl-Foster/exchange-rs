@@ -1,13 +1,14 @@
 use std::collections::HashMap;
+use std::io;
 use std::sync::{Mutex, MutexGuard};
 
 mod accounts;
 mod balance;
-mod error;
+pub mod error;
 pub mod matcher;
 
 use self::error::BadContractError;
-use self::matcher::{Matcher, Order, OrderMatch};
+use self::matcher::{DepthOrder, Direction, Matcher, Order, OrderMatch};
 
 pub type MatcherResult<T> = Result<T, BadContractError>;
 
@@ -19,8 +20,9 @@ impl Exchange {
     pub fn init() -> Exchange {
         let mut matchers = HashMap::new();
         // TODO: Pass in via config
-        for i in 1..5 {
-            matchers.insert(i, Mutex::new(Matcher::new(Vec::new(), i)));
+        for i in 1..2 {
+            let matcher = Matcher::init_matcher_from_store(i).unwrap_or(Matcher::new(i));
+            matchers.insert(i, Mutex::new(matcher));
         }
         Exchange { matchers }
     }
@@ -29,7 +31,7 @@ impl Exchange {
         &self,
         new_order: Order,
         contract_id: i32,
-    ) -> MatcherResult<Vec<OrderMatch>> {
+    ) -> MatcherResult<io::Result<Vec<OrderMatch>>> {
         self.get_matcher(contract_id)
             .map(|mut matcher| matcher.place_order(new_order))
     }
@@ -44,9 +46,13 @@ impl Exchange {
             .map(|matcher| matcher.get_matches().clone())
     }
 
-    pub fn get_depth(&self, contract_id: i32) -> MatcherResult<Vec<Order>> {
+    pub fn get_depth(
+        &self,
+        contract_id: i32,
+        direction: Direction,
+    ) -> MatcherResult<Vec<DepthOrder>> {
         self.get_matcher(contract_id)
-            .map(|matcher| matcher.get_depth())
+            .map(|matcher| matcher.get_depth(direction))
     }
 
     fn get_matcher(&self, contract_id: i32) -> MatcherResult<MutexGuard<Matcher>> {
