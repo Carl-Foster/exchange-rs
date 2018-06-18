@@ -22,14 +22,12 @@ mod contracts {
 
     #[get("/<id>/orders")]
     fn get_orders(id: i32, exchange: State<Exchange>) -> NoContractResult<Json<Vec<Order>>> {
-        exchange.get_orders(id).map(|orders| Json(orders.clone()))
+        exchange.get_orders(id).map(|orders| Json(orders))
     }
 
     #[get("/<id>/matches")]
     fn get_matches(id: i32, exchange: State<Exchange>) -> NoContractResult<Json<Vec<OrderMatch>>> {
-        exchange
-            .get_matches(id)
-            .map(|matches| Json(matches.clone()))
+        exchange.get_matches(id).map(|matches| Json(matches))
     }
 
     #[get("/<id>/depth/<direction>")]
