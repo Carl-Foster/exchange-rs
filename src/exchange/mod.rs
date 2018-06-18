@@ -1,8 +1,5 @@
-use serde_json;
 use std::collections::HashMap;
-use std::fs::File;
 use std::io;
-use std::io::Read;
 use std::sync::{Mutex, MutexGuard};
 
 pub mod error;
@@ -22,17 +19,7 @@ impl Exchange {
         let mut matchers = HashMap::new();
         // TODO: Pass in via config
         for i in 1..2 {
-            let hydrate_file = format!("matcher_{}.json", i);
-            let matcher = {
-                File::open(&hydrate_file)
-                    .and_then(|mut file| {
-                        let mut s = String::new();
-                        file.read_to_string(&mut s)?;
-                        Ok(s)
-                    })
-                    .map(|s| serde_json::from_str::<Matcher>(&s).unwrap_or(Matcher::new(i)))
-                    .unwrap_or(Matcher::new(i))
-            };
+            let matcher = Matcher::init_matcher_from_store(i).unwrap_or(Matcher::new(i));
             matchers.insert(i, Mutex::new(matcher));
         }
         Exchange { matchers }

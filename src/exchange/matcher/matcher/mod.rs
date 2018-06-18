@@ -1,5 +1,5 @@
 use serde_json;
-use std::io::Error;
+use std::io::{Error, Read};
 use std::{fs::File, io};
 
 use super::depth::Depth;
@@ -73,5 +73,18 @@ impl Matcher {
     File::create(&filename)
       .map(|file| serde_json::to_writer(file, self))
       .map(|_| ())
+  }
+
+  pub fn init_matcher_from_store(contract_id: i32) -> Option<Matcher> {
+    let hydrate_file = format!("matcher_{}.json", contract_id);
+    let contents = File::open(&hydrate_file).and_then(|mut file| {
+      let mut s = String::new();
+      file.read_to_string(&mut s)?;
+      Ok(s)
+    });
+    match contents {
+      Ok(s) => serde_json::from_str(&s).ok(),
+      Err(_) => None,
+    }
   }
 }
