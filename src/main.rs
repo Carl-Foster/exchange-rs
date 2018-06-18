@@ -12,8 +12,10 @@ extern crate serde;
 extern crate serde_json;
 extern crate uuid;
 
+mod accounts;
 mod api;
 mod exchange;
+mod store;
 
 use api::new_api;
 use exchange::Exchange;

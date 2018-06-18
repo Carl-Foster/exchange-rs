@@ -1,6 +1,8 @@
 use serde_json;
 use std::io::{Error, Read};
 use std::{fs::File, io};
+use store::GetID;
+use store::Store;
 
 use super::depth::Depth;
 use super::order_match::OrderMatch;
@@ -13,6 +15,16 @@ pub struct Matcher {
   buy: Depth,
   sell: Depth,
   contract_id: i32,
+}
+
+impl GetID for Matcher {
+  fn get_id(&self) -> String {
+    self.contract_id.to_string()
+  }
+}
+
+impl Store for Matcher {
+  const PATH: &'static str = "matchers";
 }
 
 impl Matcher {
@@ -66,25 +78,5 @@ impl Matcher {
 
   pub fn get_matches(&self) -> &Vec<OrderMatch> {
     &self.matches
-  }
-
-  pub fn save_state(&self) -> io::Result<()> {
-    let filename = format!("matcher_{}.json", self.contract_id);
-    File::create(&filename)
-      .map(|file| serde_json::to_writer(file, self))
-      .map(|_| ())
-  }
-
-  pub fn init_matcher_from_store(contract_id: i32) -> Option<Matcher> {
-    let hydrate_file = format!("matcher_{}.json", contract_id);
-    let contents = File::open(&hydrate_file).and_then(|mut file| {
-      let mut s = String::new();
-      file.read_to_string(&mut s)?;
-      Ok(s)
-    });
-    match contents {
-      Ok(s) => serde_json::from_str(&s).ok(),
-      Err(_) => None,
-    }
   }
 }

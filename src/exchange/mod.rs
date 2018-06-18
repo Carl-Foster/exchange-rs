@@ -2,13 +2,13 @@ use std::collections::HashMap;
 use std::io;
 use std::sync::{Mutex, MutexGuard};
 
-mod accounts;
-mod balance;
 pub mod error;
 pub mod matcher;
 
 use self::error::BadContractError;
 use self::matcher::{DepthOrder, Direction, Matcher, Order, OrderMatch};
+
+use store::Store;
 
 pub type MatcherResult<T> = Result<T, BadContractError>;
 
@@ -21,7 +21,7 @@ impl Exchange {
         let mut matchers = HashMap::new();
         // TODO: Pass in via config
         for i in 1..2 {
-            let matcher = Matcher::init_matcher_from_store(i).unwrap_or(Matcher::new(i));
+            let matcher = Matcher::init_from_store(i.to_string()).unwrap_or(Matcher::new(i));
             matchers.insert(i, Mutex::new(matcher));
         }
         Exchange { matchers }
