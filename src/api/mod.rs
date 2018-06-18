@@ -4,8 +4,7 @@ use rocket::{ignite, Rocket};
 mod contracts {
     use exchange::error::BadContractError;
     use exchange::Exchange;
-    use rocket::response::status::NotFound;
-    type NoContractResult<T> = Result<T, NotFound<BadContractError>>;
+    type NoContractResult<T> = Result<T, BadContractError>;
     use exchange::matcher::{DepthOrder, Direction, Order, OrderMatch};
     use rocket::State;
     use rocket_contrib::Json;
@@ -19,15 +18,11 @@ mod contracts {
         exchange
             .place_order(order.into_inner(), id)
             .map(|result| result.map(Json))
-            .map_err(|e| NotFound(e))
     }
 
     #[get("/<id>/orders")]
     fn get_orders(id: i32, exchange: State<Exchange>) -> NoContractResult<Json<Vec<Order>>> {
-        exchange
-            .get_orders(id)
-            .map(|orders| Json(orders.clone()))
-            .map_err(|e| NotFound(e))
+        exchange.get_orders(id).map(|orders| Json(orders.clone()))
     }
 
     #[get("/<id>/matches")]
@@ -35,7 +30,6 @@ mod contracts {
         exchange
             .get_matches(id)
             .map(|matches| Json(matches.clone()))
-            .map_err(|e| NotFound(e))
     }
 
     #[get("/<id>/depth/<direction>")]
@@ -44,10 +38,7 @@ mod contracts {
         direction: Direction,
         exchange: State<Exchange>,
     ) -> NoContractResult<Json<Vec<DepthOrder>>> {
-        exchange
-            .get_depth(id, direction)
-            .map(|depth| Json(depth))
-            .map_err(|e| NotFound(e))
+        exchange.get_depth(id, direction).map(|depth| Json(depth))
     }
 
 }
