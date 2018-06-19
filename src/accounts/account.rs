@@ -12,8 +12,13 @@ pub struct Account {
 }
 
 impl GetID for Account {
-    fn get_id(&self) -> String {
+    type ID = Uuid;
+    fn get_id_as_string(&self) -> String {
         self.account_id.hyphenated().to_string()
+    }
+
+    fn get_id(&self) -> Self::ID {
+        self.account_id
     }
 }
 

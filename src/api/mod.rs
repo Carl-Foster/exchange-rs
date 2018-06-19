@@ -1,11 +1,10 @@
-use exchange::Exchange;
 use rocket::{ignite, Rocket};
 
 mod contracts {
     use exchange::error::BadContractError;
     use exchange::Exchange;
     type NoContractResult<T> = Result<T, BadContractError>;
-    use exchange::matcher::{DepthOrder, Direction, Order, OrderMatch};
+    use exchange::{DepthOrder, Direction, Order, OrderMatch};
     use rocket::State;
     use rocket_contrib::Json;
     use std::io;
@@ -41,16 +40,14 @@ mod contracts {
 
 }
 
-pub fn new_api(exchange: Exchange) -> Rocket {
-    ignite()
-        .mount(
-            "/contracts",
-            routes![
-                contracts::place_order,
-                contracts::get_matches,
-                contracts::get_orders,
-                contracts::get_depth
-            ],
-        )
-        .manage(exchange)
+pub fn new_api() -> Rocket {
+    ignite().mount(
+        "/contracts",
+        routes![
+            contracts::place_order,
+            contracts::get_matches,
+            contracts::get_orders,
+            contracts::get_depth
+        ],
+    )
 }

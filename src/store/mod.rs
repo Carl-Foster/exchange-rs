@@ -9,11 +9,13 @@ use std::path::Path;
 pub trait Store: Serialize + DeserializeOwned + GetID {
   const PATH: &'static str;
   fn save_state(&self) -> io::Result<serde_json::Result<()>> {
-    let filename = Path::new("store").join(Self::PATH).join(self.get_id());
+    let filename = Path::new("store")
+      .join(Self::PATH)
+      .join(self.get_id_as_string());
     File::create(&filename).map(|file| serde_json::to_writer(file, self))
   }
 
-  fn init_from_store(id: String) -> Option<Self> {
+  fn init_from_store<P: AsRef<Path>>(id: P) -> Option<Self> {
     let filename = Path::new("store").join(Self::PATH).join(id);
     let contents = File::open(&filename).and_then(|mut file| {
       let mut s = String::new();
@@ -28,5 +30,7 @@ pub trait Store: Serialize + DeserializeOwned + GetID {
 }
 
 pub trait GetID {
-  fn get_id(&self) -> String;
+  type ID;
+  fn get_id_as_string(&self) -> String;
+  fn get_id(&self) -> Self::ID;
 }

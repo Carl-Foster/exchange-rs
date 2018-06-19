@@ -17,11 +17,13 @@ mod api;
 mod exchange;
 mod store;
 
+use accounts::Accounts;
 use api::new_api;
 use exchange::Exchange;
 
 fn main() {
     dotenv::dotenv().ok();
     let exchange = Exchange::init();
-    new_api(exchange).launch();
+    let accounts = Accounts::init();
+    new_api().manage(exchange).manage(accounts).launch();
 }

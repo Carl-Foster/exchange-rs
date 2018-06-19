@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use exchange::matcher::orders::Order;
+use super::Order;
 
 #[derive(Debug, Serialize)]
 pub struct DepthOrder {
