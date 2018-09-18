@@ -25,3 +25,12 @@ impl GetID for Account {
 impl Store for Account {
     const PATH: &'static str = "accounts";
 }
+
+impl Account {
+    pub fn new() -> Account {
+        Account {
+            account_id: Uuid::new_v4(),
+            balances: HashMap::new(),
+        }
+    }
+}

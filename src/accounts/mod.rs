@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::fs;
+use std::io;
 use std::path::Path;
 use std::sync::Mutex;
 use uuid::Uuid;
@@ -18,7 +19,7 @@ pub struct Accounts {
 impl Accounts {
   pub fn init() -> Accounts {
     let mut mapping = HashMap::new();
-    let accounts_dir = Path::new("/store").join(Account::PATH);
+    let accounts_dir = Path::new("store").join(Account::PATH);
     let accounts_option = fs::read_dir(accounts_dir)
       .map(|entries| {
         entries.map(|entry| {
@@ -35,5 +36,17 @@ impl Accounts {
     });
 
     Accounts { mapping }
+  }
+
+  pub fn new_account(&mut self) -> io::Result<Mutex<Account>> {
+    let account = Account::new();
+    account.save_state()?;
+    let id = account.get_id();
+    Ok(
+      self
+        .mapping
+        .insert(id, Mutex::new(account))
+        .expect("Not sure what happened here"),
+    )
   }
 }
