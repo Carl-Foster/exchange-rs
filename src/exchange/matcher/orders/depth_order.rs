@@ -9,9 +9,9 @@ pub struct DepthOrder {
 }
 
 impl DepthOrder {
-  pub fn from_orders(orders: &Vec<Order>) -> Vec<DepthOrder> {
+  pub fn from_orders(orders: &[Order]) -> Vec<DepthOrder> {
     let mut price_map: HashMap<i32, i32> = HashMap::new();
-    for order in orders.clone() {
+    for order in orders.to_owned() {
       let quantity = {
         let existing_quantity = price_map.get_mut(&order.price);
         if let Some(stored) = existing_quantity {

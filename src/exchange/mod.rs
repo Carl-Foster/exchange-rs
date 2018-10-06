@@ -21,7 +21,7 @@ impl Exchange {
         let mut matchers = HashMap::new();
         // TODO: Pass in via config
         for i in 1..2 {
-            let matcher = Matcher::init_matcher_from_store(i).unwrap_or(Matcher::new(i));
+            let matcher = Matcher::init_matcher_from_store(i).unwrap_or_else(|| Matcher::new(i));
             matchers.insert(i, Mutex::new(matcher));
         }
         Exchange { matchers }
