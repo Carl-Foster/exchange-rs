@@ -1,6 +1,6 @@
 use serde_json;
-use std::io::{Error, Read};
-use std::{fs::File, io};
+use std::fs::File;
+use std::io::Read;
 
 mod depth;
 mod order_match;
@@ -40,12 +40,11 @@ impl Matcher {
     DepthOrder::from_orders(orders)
   }
 
-  pub fn place_order(&mut self, new_order: Order) -> Result<Vec<OrderMatch>, Error> {
+  pub fn place_order(&mut self, new_order: Order) -> Vec<OrderMatch> {
     self.orders.push(new_order.clone());
     let order_matches = self.match_order(new_order);
     self.matches.append(&mut order_matches.clone());
-    self.save_state()?;
-    Ok(order_matches)
+    order_matches
   }
 
   fn match_order(&mut self, mut new_order: Order) -> Vec<OrderMatch> {
@@ -72,12 +71,12 @@ impl Matcher {
     &self.matches
   }
 
-  pub fn save_state(&self) -> io::Result<()> {
-    let filename = format!("matcher_{}.json", self.contract_id);
-    File::create(&filename)
-      .map(|file| serde_json::to_writer(file, self))
-      .map(|_| ())
-  }
+  // pub fn save_state(&self) -> io::Result<()> {
+  //   let filename = format!("matcher_{}.json", self.contract_id);
+  //   File::create(&filename)
+  //     .map(|file| serde_json::to_writer(file, self))
+  //     .map(|_| ())
+  // }
 
   pub fn init_matcher_from_store(contract_id: i32) -> Option<Matcher> {
     let hydrate_file = format!("matcher_{}.json", contract_id);

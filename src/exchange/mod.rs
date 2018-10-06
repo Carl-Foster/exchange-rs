@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::io;
 use std::sync::{Mutex, MutexGuard};
 
 mod accounts;
@@ -31,7 +30,7 @@ impl Exchange {
         &self,
         new_order: Order,
         contract_id: i32,
-    ) -> MatcherResult<io::Result<Vec<OrderMatch>>> {
+    ) -> MatcherResult<Vec<OrderMatch>> {
         self.get_matcher(contract_id)
             .map(|mut matcher| matcher.place_order(new_order))
     }
