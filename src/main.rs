@@ -25,5 +25,6 @@ fn main() {
     dotenv::dotenv().ok();
     let exchange = Exchange::init();
     let accounts = Accounts::init();
-    new_api().manage(exchange).manage(accounts).launch();
+
+    Api::new().add_state(exchange).add_state(accounts).start();
 }

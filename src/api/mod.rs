@@ -40,14 +40,26 @@ mod contracts {
 
 }
 
-pub fn new_api() -> Rocket {
-    ignite().mount(
-        "/contracts",
-        routes![
-            contracts::place_order,
-            contracts::get_matches,
-            contracts::get_orders,
-            contracts::get_depth
-        ],
-    )
+struct Api(Rocket);
+
+impl Api {
+    pub fn init() -> Rocket {
+        ignite().mount(
+            "/contracts",
+            routes![
+                contracts::place_order,
+                contracts::get_matches,
+                contracts::get_orders,
+                contracts::get_depth
+            ],
+        )
+    }
+
+    pub fn add_state<T: Send + Sync + 'static>(&mut self, state: T) -> Self {
+        self.0.manage(state)
+    }
+
+    pub fn start(&mut self) {
+        self.0.launch();
+    }
 }
