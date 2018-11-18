@@ -23,6 +23,7 @@ impl Depth {
     pub fn match_order(&mut self, new_order: &mut Order) -> Vec<OrderMatch> {
         let mut order_matches: Vec<OrderMatch> = Vec::new();
         let matchable_orders = self.get_matchable_orders(new_order.account_id.clone());
+        // It either runs through entire depth or stops when new_order has nothing left to fill
         for top_order in matchable_orders {
             if new_order.quantity == 0 {
                 break;

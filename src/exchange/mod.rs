@@ -51,7 +51,7 @@ impl Exchange {
         direction: Direction,
     ) -> MatcherResult<Vec<DepthOrder>> {
         self.get_matcher(contract_id)
-            .map(|matcher| matcher.get_depth(direction))
+            .map(|matcher| matcher.get_anonymous_depth(direction))
     }
 
     fn get_matcher(&self, contract_id: i32) -> MatcherResult<MutexGuard<Matcher>> {

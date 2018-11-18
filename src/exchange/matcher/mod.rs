@@ -30,7 +30,7 @@ impl Matcher {
     }
   }
 
-  pub fn get_depth(&self, direction: Direction) -> Vec<DepthOrder> {
+  pub fn get_anonymous_depth(&self, direction: Direction) -> Vec<DepthOrder> {
     let orders = {
       match direction {
         Direction::Buy => self.buy.get_orders(),
