@@ -1,7 +1,7 @@
 use rocket::http::RawStr;
 use rocket::request::FromParam;
 
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Deserialize, Serialize)]
 pub enum Direction {
     Buy,
     Sell,

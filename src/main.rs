@@ -1,5 +1,4 @@
-#![feature(drain_filter)]
-#![feature(plugin)]
+#![feature(plugin, decl_macro)]
 #![plugin(rocket_codegen)]
 
 extern crate dotenv;

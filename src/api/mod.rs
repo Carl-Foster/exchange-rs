@@ -7,26 +7,24 @@ mod contracts {
     use exchange::{DepthOrder, Direction, Order, OrderMatch};
     use rocket::State;
     use rocket_contrib::Json;
-    use std::io;
+
     #[post("/<id>/orders", data = "<order>")]
     fn place_order(
         id: i32,
         order: Json<Order>,
         exchange: State<Exchange>,
-    ) -> NoContractResult<io::Result<Json<Vec<OrderMatch>>>> {
-        exchange
-            .place_order(order.into_inner(), id)
-            .map(|result| result.map(Json))
+    ) -> NoContractResult<Json<Vec<OrderMatch>>> {
+        exchange.place_order(order.into_inner(), id).map(Json)
     }
 
     #[get("/<id>/orders")]
     fn get_orders(id: i32, exchange: State<Exchange>) -> NoContractResult<Json<Vec<Order>>> {
-        exchange.get_orders(id).map(|orders| Json(orders))
+        exchange.get_orders(id).map(Json)
     }
 
     #[get("/<id>/matches")]
     fn get_matches(id: i32, exchange: State<Exchange>) -> NoContractResult<Json<Vec<OrderMatch>>> {
-        exchange.get_matches(id).map(|matches| Json(matches))
+        exchange.get_matches(id).map(Json)
     }
 
     #[get("/<id>/depth/<direction>")]
@@ -35,7 +33,7 @@ mod contracts {
         direction: Direction,
         exchange: State<Exchange>,
     ) -> NoContractResult<Json<Vec<DepthOrder>>> {
-        exchange.get_depth(id, direction).map(|depth| Json(depth))
+        exchange.get_depth(id, direction).map(Json)
     }
 
 }

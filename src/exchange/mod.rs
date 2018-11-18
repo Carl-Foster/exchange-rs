@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::io;
 use std::sync::{Mutex, MutexGuard};
 
 use store::Store;
@@ -28,7 +27,7 @@ impl Exchange {
         let mut matchers = HashMap::new();
         // TODO: Pass in via config
         for i in 1..2 {
-            let matcher = Matcher::init_from_store(i.to_string()).unwrap_or(Matcher::new(i));
+            let matcher = Matcher::init_matcher_from_store(i).unwrap_or_else(|| Matcher::new(i));
             matchers.insert(i, Mutex::new(matcher));
         }
         Exchange { matchers }
@@ -38,7 +37,7 @@ impl Exchange {
         &self,
         new_order: Order,
         contract_id: i32,
-    ) -> MatcherResult<io::Result<Vec<OrderMatch>>> {
+    ) -> MatcherResult<Vec<OrderMatch>> {
         self.get_matcher(contract_id)
             .map(|mut matcher| matcher.place_order(new_order))
     }
@@ -59,7 +58,7 @@ impl Exchange {
         direction: Direction,
     ) -> MatcherResult<Vec<DepthOrder>> {
         self.get_matcher(contract_id)
-            .map(|matcher| matcher.get_depth(direction))
+            .map(|matcher| matcher.get_anonymous_depth(direction))
     }
 
     fn get_matcher(&self, contract_id: i32) -> MatcherResult<MutexGuard<Matcher>> {

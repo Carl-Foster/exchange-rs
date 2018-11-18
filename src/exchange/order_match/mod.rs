@@ -22,8 +22,8 @@ impl OrderMatch {
         let price_matched = top_order.price;
         let (buy_order_id, sell_order_id) = {
             match new_order.direction {
-                Direction::Buy => (new_order.id.clone(), top_order.id.clone()),
-                Direction::Sell => (top_order.id.clone(), new_order.id.clone()),
+                Direction::Buy => (new_order.id, top_order.id),
+                Direction::Sell => (top_order.id, new_order.id),
             }
         };
         OrderMatch {
