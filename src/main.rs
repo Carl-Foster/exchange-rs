@@ -17,7 +17,7 @@ mod exchange;
 mod store;
 
 use accounts::Accounts;
-use api::new_api;
+use api::Api;
 use exchange::Exchange;
 
 fn main() {
@@ -25,5 +25,5 @@ fn main() {
     let exchange = Exchange::init();
     let accounts = Accounts::init();
 
-    Api::new().add_state(exchange).add_state(accounts).start();
+    Api::init().add_state(exchange).add_state(accounts).start();
 }

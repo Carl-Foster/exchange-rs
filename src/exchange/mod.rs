@@ -1,18 +1,10 @@
 use std::collections::HashMap;
 use std::sync::{Mutex, MutexGuard};
 
-use store::Store;
-
-pub mod depth;
 pub mod error;
 pub mod matcher;
-pub mod order_match;
-pub mod orders;
 
-pub use self::depth::Depth;
-pub use self::matcher::Matcher;
-pub use self::order_match::OrderMatch;
-pub use self::orders::{DepthOrder, Direction, Order};
+pub use self::matcher::{Matcher, Depth, DepthOrder, Direction, Order, OrderMatch};
 
 use self::error::BadContractError;
 

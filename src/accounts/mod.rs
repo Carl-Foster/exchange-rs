@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 use std::fs;
-use std::io;
 use std::path::Path;
 use std::sync::Mutex;
 use uuid::Uuid;
@@ -38,15 +37,12 @@ impl Accounts {
     Accounts { mapping }
   }
 
-  pub fn new_account(&mut self) -> io::Result<Mutex<Account>> {
+  pub fn new_account(&mut self) -> Mutex<Account> {
     let account = Account::new();
-    account.save_state()?;
     let id = account.get_id();
-    Ok(
       self
         .mapping
         .insert(id, Mutex::new(account))
-        .expect("Not sure what happened here"),
-    )
+        .expect("Not sure what happened here")
   }
 }
